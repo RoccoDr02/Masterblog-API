@@ -70,5 +70,21 @@ def update_post(id):
     return jsonify(post_to_update), 200
 
 
+@app.route('/api/posts/search', methods=['GET'])
+def search_posts():
+    query = request.args.get('q', None)
+
+    if not query:
+        return jsonify({"error": "Query parameter 'q' is required"}), 400
+
+    # Suche: Titel oder Content enthält den Suchbegriff (case-insensitive)
+    results = [
+        post for post in POSTS
+        if query.lower() in post["title"].lower() or query.lower() in post["content"].lower()
+    ]
+
+    return jsonify(results), 200
+
+
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5002, debug=True)
